@@ -42,7 +42,7 @@
 
             <!-- URL do backend -->
             <div class="input-group">
-                <input type="url" id="backendUrl" placeholder="https://seu-bot.railway.app" value="https://seuapp.railway.app">
+                <input type="url" id="backendUrl" placeholder="https://seu-bot.railway.app">
                 <button class="btn btn-primary" id="saveUrlBtn">Salvar</button>
             </div>
 
@@ -68,10 +68,8 @@
 
             <!-- Respostas automáticas (lista estática) -->
             <h2>📝 Respostas automáticas</h2>
-            <div class="rule-list" id="rulesList">
-                <!-- será preenchido via JS -->
-            </div>
-            <footer>Painel de controle  Bot WhatsApp</footer>
+            <div class="rule-list" id="rulesList"></div>
+            <footer>Painel de controle - Bot WhatsApp</footer>
         </div>
     </div>
 
@@ -95,7 +93,7 @@
         };
 
         // Estado
-        let backendUrl = localStorage.getItem('backendUrl') || 'https://seuapp.railway.app';
+        let backendUrl = localStorage.getItem('backendUrl') || '';
         document.getElementById('backendUrl').value = backendUrl;
 
         // Elementos DOM
@@ -127,7 +125,11 @@
 
         // Buscar status
         async function fetchStatus() {
-            if (!backendUrl) return;
+            if (!backendUrl) {
+                statusBadge.className = 'status-badge badge-offline';
+                statusBadge.innerText = 'Sem URL';
+                return;
+            }
             try {
                 const res = await fetch(`${backendUrl}/status`);
                 if (!res.ok) throw new Error('Erro na resposta');
@@ -169,7 +171,6 @@
             try {
                 const res = await fetch(`${backendUrl}/qr`);
                 const html = await res.text();
-                // Extrair src da imagem
                 const match = html.match(/<img[^>]+src="([^">]+)"/);
                 if (match && match[1]) {
                     qrImage.src = match[1];
@@ -186,6 +187,11 @@
         // Ligar/desligar via toggle
         botToggle.addEventListener('change', async (e) => {
             const ativo = e.target.checked;
+            if (!backendUrl) {
+                alert('Defina a URL do backend primeiro.');
+                botToggle.checked = !ativo;
+                return;
+            }
             try {
                 const res = await fetch(`${backendUrl}/toggle`, {
                     method: 'POST',
@@ -193,15 +199,16 @@
                     body: JSON.stringify({ ativo })
                 });
                 if (res.ok) {
-                    botStatusText.innerText = ativo ? 'Ativado' : 'Desativado';
+                    const data = await res.json();
+                    botStatusText.innerText = data.botAtivo ? 'Ativado' : 'Desativado';
                 } else {
-                    // Reverte se falhar
                     botToggle.checked = !ativo;
-                    alert('Erro ao alterar estado');
+                    alert('Erro ao alterar estado do bot');
                 }
             } catch (err) {
+                console.error('Erro na requisição:', err);
                 botToggle.checked = !ativo;
-                alert('Erro de conexão');
+                alert('Erro de conexão com o servidor');
             }
         });
 
@@ -209,8 +216,8 @@
         refreshBtn.addEventListener('click', fetchStatus);
 
         // Inicializar
-        fetchStatus();
-        setInterval(fetchStatus, 30000); // atualiza a cada 30s
+        if (backendUrl) fetchStatus();
+        setInterval(() => { if (backendUrl) fetchStatus(); }, 30000);
     </script>
 </body>
 </html>
