@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background: #1a1a2e;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+        .card {
+            background: rgba(30, 30, 46, 0.9);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            padding: 1.8rem;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #f0eef7;
+        }
+        h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #c4b5fd, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            color: #ddd6fe;
+            margin-bottom: 1.2rem;
+            border-left: 5px solid #8b5cf6;
+            padding-left: 1rem;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .input-group input {
+            flex: 2 1 250px;
+            background: #252538;
+            border: 1px solid #3f3f5e;
+            border-radius: 40px;
+            padding: 0.9rem 1.5rem;
+            color: #f0eef7;
+            outline: none;
+        }
+        .btn {
+            background: #2d2d44;
+            border: none;
+            border-radius: 40px;
+            padding: 0.8rem 1.8rem;
+            color: #e2d9fd;
+            cursor: pointer;
+            border: 1px solid #3f3f60;
+            transition: 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(145deg, #6d4aff, #5b3ec9);
+            color: white;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(145deg, #7b5eff, #6a4de0);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            background: #252538;
+            border: 1px solid;
+        }
+        .badge-online {
+            background: #1e392a;
+            color: #6fcf97;
+            border-color: #27ae60;
+        }
+        .badge-offline {
+            background: #3e2a2a;
+            color: #f28b82;
+            border-color: #e74c3c;
+        }
+        .badge-waiting {
+            background: #3d351f;
+            color: #f9cb6b;
+            border-color: #f39c12;
+        }
+        .qr-container {
+            background: #1f1f30;
+            border-radius: 24px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            border: 1px dashed #5f4b8b;
+        }
+        .qr-container img {
+            max-width: 220px;
+            border-radius: 16px;
+            background: white;
+            padding: 0.5rem;
+        }
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: #252538;
+            padding: 1rem 1.5rem;
+            border-radius: 60px;
+            border: 1px solid #3f3f5e;
+        }
+        .toggle-switch input[type="checkbox"] {
+            appearance: none;
+            width: 52px;
+            height: 28px;
+            background: #3a3a52;
+            border-radius: 40px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #5a5a7a;
+        }
+        .toggle-switch input[type="checkbox"]:checked {
+            background: #8b5cf6;
+        }
+        .toggle-switch input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: 0.2s;
+        }
+        .toggle-switch input[type="checkbox"]:checked::before {
+            left: 27px;
+        }
+        footer {
+            text-align: center;
+            color: #6b6882;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>📱 WhatsApp Control</h1>
+
+            <!-- URL do backend -->
+            <div class="input-group">
+                <input type="url" id="backendUrl" placeholder="https://seu-bot.onrender.com" value="https://seu-backend-aqui.railway.app">
+                <button class="btn btn-secondary" id="saveUrlBtn">Salvar</button>
+            </div>
+
+            <!-- Status e QR -->
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>📡 Conexão</h2>
+                <span id="statusBadge" class="status-badge badge-offline">Offline</span>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-primary" id="refreshStatusBtn">🔄 Atualizar Status</button>
+            </div>
+
+            <div id="qrDisplay" class="qr-container" style="display: none;">
+                <h3>📸 Escaneie o QR Code</h3>
+                <img id="qrImage" src="" alt="QR Code">
+            </div>
+
+            <!-- Controle Geral (Toggle) -->
+            <h2 style="margin-top: 2rem;">⚙️ Controle Geral</h2>
+            <div class="toggle-switch">
+                <span>🤖 Bot ativo</span>
+                <input type="checkbox" id="botToggle" checked>
+                <span id="toggleStatus">Ativado</span>
+            </div>
+
+            <footer>
+                Painel de controle para WhatsApp Bot
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            let backendUrl = localStorage.getItem('backendUrl') || 'https://seu-backend-aqui.railway.app';
+            document.getElementById('backendUrl').value = backendUrl;
+
+            const statusBadge = document.getElementById('statusBadge');
+            const qrDisplay = document.getElementById('qrDisplay');
+            const qrImage = document.getElementById('qrImage');
+            const botToggle = document.getElementById('botToggle');
+            const toggleStatus = document.getElementById('toggleStatus');
+            const saveUrlBtn = document.getElementById('saveUrlBtn');
+            const refreshStatusBtn = document.getElementById('refreshStatusBtn');
+
+            // Salvar URL
+            saveUrlBtn.addEventListener('click', () => {
+                const url = document.getElementById('backendUrl').value.trim().replace(/\/$/, '');
+                if (url) {
+                    backendUrl = url;
+                    localStorage.setItem('backendUrl', backendUrl);
+                    alert('URL salva!');
+                    fetchStatus();
+                }
+            });
+
+            // Buscar status
+            async function fetchStatus() {
+                if (!backendUrl) return;
+                try {
+                    const response = await fetch(`${backendUrl}/status`);
+                    if (!response.ok) throw new Error('Erro na resposta');
+                    const data = await response.json();
+                    updateUI(data);
+                } catch (err) {
+                    console.warn(err);
+                    statusBadge.className = 'status-badge badge-offline';
+                    statusBadge.innerText = 'Offline';
+                    qrDisplay.style.display = 'none';
+                }
+            }
+
+            function updateUI(data) {
+                // ready indica se o bot está conectado ao WhatsApp
+                if (data.ready) {
+                    statusBadge.className = 'status-badge badge-online';
+                    statusBadge.innerText = 'Online';
+                    qrDisplay.style.display = 'none';
+                } else if (data.qr) {
+                    statusBadge.className = 'status-badge badge-waiting';
+                    statusBadge.innerText = 'Aguardando QR';
+                    fetchQR();
+                } else {
+                    statusBadge.className = 'status-badge badge-offline';
+                    statusBadge.innerText = 'Offline';
+                    qrDisplay.style.display = 'none';
+                }
+
+                // Atualiza o toggle conforme botAtivo vindo do backend
+                botToggle.checked = data.botAtivo;
+                toggleStatus.innerText = data.botAtivo ? 'Ativado' : 'Desativado';
+            }
+
+            async function fetchQR() {
+                try {
+                    const response = await fetch(`${backendUrl}/qr`);
+                    const html = await response.text();
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const img = doc.querySelector('img');
+                    if (img && img.src) {
+                        qrImage.src = img.src;
+                        qrDisplay.style.display = 'block';
+                    } else {
+                        qrDisplay.style.display = 'none';
+                    }
+                } catch (err) {
+                    console.warn(err);
+                    qrDisplay.style.display = 'none';
+                }
+            }
+
+            // Toggle via frontend: quando o usuário clica no checkbox, faz uma requisição POST para /toggle
+            botToggle.addEventListener('change', async (e) => {
+                const novoEstado = e.target.checked;
+                // Otimista: atualiza o texto imediatamente
+                toggleStatus.innerText = novoEstado ? 'Ativado' : 'Desativado';
+                try {
+                    const response = await fetch(`${backendUrl}/toggle`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Confirma o estado retornado pelo backend
+                        botToggle.checked = data.botAtivo;
+                        toggleStatus.innerText = data.botAtivo ? 'Ativado' : 'Desativado';
+                    } else {
+                        // Se falhar, reverte
+                        botToggle.checked = !novoEstado;
+                        toggleStatus.innerText = !novoEstado ? 'Ativado' : 'Desativado';
+                        alert('Erro ao alterar estado do bot');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    botToggle.checked = !novoEstado;
+                    toggleStatus.innerText = !novoEstado ? 'Ativado' : 'Desativado';
+                    alert('Erro de conexão');
+                }
+            });
+
+            refreshStatusBtn.addEventListener('click', fetchStatus);
+
+            // Inicializa
+            fetchStatus();
+            setInterval(fetchStatus, 30000); // atualiza a cada 30s
+        })();
+    </script>
+</body>
+</html>
