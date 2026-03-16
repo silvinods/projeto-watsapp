@@ -5,35 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WhatsApp Control Panel</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
         body { background: #1a1a2e; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
         .container { max-width: 900px; width: 100%; }
-        .card { background: rgba(30, 30, 46, 0.9); backdrop-filter: blur(4px); border-radius: 24px; padding: 1.8rem; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.05); margin-bottom: 1.8rem; color: #f0eef7; }
-        h1 { font-size: 2.2rem; background: linear-gradient(135deg, #c4b5fd, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem; }
-        h2 { font-size: 1.5rem; color: #ddd6fe; margin-bottom: 1.2rem; border-left: 5px solid #8b5cf6; padding-left: 1rem; }
+        .card { background: #16213e; border-radius: 24px; padding: 2rem; box-shadow: 0 20px 40px -10px #00000080; border: 1px solid #0f3460; color: #e0e0e0; }
+        h1 { font-size: 2rem; margin-bottom: 1.5rem; color: #a78bfa; display: flex; align-items: center; gap: 0.5rem; }
+        h2 { font-size: 1.3rem; margin: 1.5rem 0 1rem; border-left: 5px solid #8b5cf6; padding-left: 1rem; }
         .input-group { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-bottom: 1.5rem; }
-        .input-group input { flex: 2 1 250px; background: #252538; border: 1px solid #3f3f5e; border-radius: 40px; padding: 0.9rem 1.5rem; color: #f0eef7; outline: none; }
-        .input-group button { background: #33334b; border: none; border-radius: 40px; padding: 0.8rem 1.8rem; color: #e2d9fd; cursor: pointer; border: 1px solid #3f3f60; }
-        .btn-primary { background: linear-gradient(145deg, #6d4aff, #5b3ec9); border: 1px solid #8a6eff; color: white; font-weight: 600; }
-        .status-badge { display: inline-block; padding: 0.5rem 1.2rem; border-radius: 40px; font-weight: 600; background: #252538; border: 1px solid; }
+        .input-group input { flex: 2 1 250px; background: #0f3460; border: 1px solid #1a4a7a; border-radius: 40px; padding: 0.8rem 1.5rem; color: white; outline: none; }
+        .btn { background: #0f3460; border: none; border-radius: 40px; padding: 0.8rem 1.8rem; color: white; cursor: pointer; transition: 0.2s; border: 1px solid #1a4a7a; }
+        .btn-primary { background: #8b5cf6; border-color: #a78bfa; }
+        .btn-primary:hover { background: #7c4dff; }
+        .status-badge { display: inline-block; padding: 0.4rem 1.2rem; border-radius: 40px; font-weight: 600; background: #0f3460; border: 1px solid; }
         .badge-online { background: #1e392a; color: #6fcf97; border-color: #27ae60; }
         .badge-offline { background: #3e2a2a; color: #f28b82; border-color: #e74c3c; }
         .badge-waiting { background: #3d351f; color: #f9cb6b; border-color: #f39c12; }
-        .qr-container { background: #1f1f30; border-radius: 24px; padding: 1.5rem; text-align: center; margin: 1.5rem 0; border: 1px dashed #5f4b8b; }
-        .qr-container img { max-width: 220px; width: 100%; border-radius: 16px; background: white; padding: 0.5rem; }
-        .toggle-switch { display: flex; align-items: center; gap: 1rem; background: #252538; padding: 1rem 1.5rem; border-radius: 60px; }
-        .toggle-switch input[type="checkbox"] { appearance: none; width: 52px; height: 28px; background: #3a3a52; border-radius: 40px; position: relative; cursor: pointer; border: 1px solid #5a5a7a; }
+        .qr-container { background: #0f3460; border-radius: 24px; padding: 1.5rem; text-align: center; margin: 1.5rem 0; border: 1px dashed #8b5cf6; }
+        .qr-container img { max-width: 220px; border-radius: 16px; background: white; padding: 0.5rem; }
+        .toggle-switch { display: flex; align-items: center; gap: 1rem; background: #0f3460; padding: 1rem 1.5rem; border-radius: 60px; border: 1px solid #1a4a7a; }
+        .toggle-switch input[type="checkbox"] { appearance: none; width: 52px; height: 28px; background: #1a4a7a; border-radius: 40px; position: relative; cursor: pointer; border: 1px solid #2a5a8a; }
         .toggle-switch input[type="checkbox"]:checked { background: #8b5cf6; }
         .toggle-switch input[type="checkbox"]::before { content: ''; position: absolute; width: 22px; height: 22px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: 0.2s; }
         .toggle-switch input[type="checkbox"]:checked::before { left: 27px; }
-        .rule-list { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
-        .rule-item { background: #1e1e30; border-radius: 20px; padding: 1rem 1.3rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; border: 1px solid #383855; }
-        .rule-item .keyword { background: #2f2f48; padding: 0.3rem 1rem; border-radius: 30px; font-weight: 600; color: #b6a6f0; border: 1px solid #6a4e9e; }
-        .rule-item .response { flex: 1; color: #cdc6e6; word-break: break-word; }
-        .add-rule { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1.5rem; background: #252538; padding: 1.5rem; border-radius: 24px; }
-        .add-rule input { flex: 1 1 180px; background: #1b1b2b; border: 1px solid #43436b; border-radius: 40px; padding: 0.8rem 1.5rem; color: white; }
-        .add-rule button { background: #6d4aff; border: none; border-radius: 40px; padding: 0.8rem 2rem; color: white; font-weight: 600; cursor: pointer; }
+        .rule-list { display: flex; flex-direction: column; gap: 0.8rem; margin: 1rem 0; }
+        .rule-item { background: #0f3460; border-radius: 16px; padding: 0.8rem 1.2rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; border: 1px solid #1a4a7a; }
+        .rule-item .keyword { background: #1a4a7a; padding: 0.2rem 1rem; border-radius: 30px; font-weight: 600; color: #b6a6f0; }
+        .rule-item .response { flex: 1; color: #cdc6e6; }
         footer { text-align: center; color: #6b6882; margin-top: 2rem; }
+        @media (max-width: 600px) { .card { padding: 1.2rem; } }
     </style>
 </head>
 <body>
@@ -43,8 +42,8 @@
 
             <!-- URL do backend -->
             <div class="input-group">
-                <input type="url" id="backendUrl" placeholder="https://seu-backend.onrender.com" value="https://whatsapp-backend-dqfm.onrender.com">
-                <button id="saveUrlBtn">Salvar URL</button>
+                <input type="url" id="backendUrl" placeholder="https://seu-bot.railway.app" value="https://seuapp.railway.app">
+                <button class="btn btn-primary" id="saveUrlBtn">Salvar</button>
             </div>
 
             <!-- Status e QR -->
@@ -52,138 +51,99 @@
                 <h2>📡 Conexão</h2>
                 <span id="statusBadge" class="status-badge badge-offline">Offline</span>
             </div>
-            <div class="button-group" style="margin: 1rem 0;">
-                <button class="btn-primary" id="refreshStatusBtn">🔄 Atualizar Status</button>
+            <div style="margin: 1rem 0;">
+                <button class="btn" id="refreshStatusBtn">🔄 Atualizar Status</button>
             </div>
             <div id="qrDisplay" class="qr-container" style="display: none;">
                 <img id="qrImage" src="" alt="QR Code">
-                <p>Escaneie o QR Code com seu WhatsApp</p>
             </div>
 
-            <!-- Controle Geral -->
+            <!-- Controle Geral (Toggle) -->
             <h2>⚙️ Controle Geral</h2>
             <div class="toggle-switch">
                 <span>🤖 Bot ativo</span>
                 <input type="checkbox" id="botToggle">
-                <span id="botStatusText">Respondendo mensagens</span>
+                <span id="botStatusText">Desativado</span>
             </div>
 
-            <!-- Respostas automáticas -->
+            <!-- Respostas automáticas (lista estática) -->
             <h2>📝 Respostas automáticas</h2>
-            <div id="rulesList" class="rule-list"></div>
-
-            <!-- Adicionar nova regra (apenas local) -->
-            <div class="add-rule">
-                <input type="text" id="newKeyword" placeholder="Palavra-chave (ex: oi)">
-                <input type="text" id="newResponse" placeholder="Mensagem de resposta">
-                <button id="addRuleBtn">➕ Adicionar</button>
+            <div class="rule-list" id="rulesList">
+                <!-- será preenchido via JS -->
             </div>
-            <footer>WhatsApp Control Panel — Interface para seu bot</footer>
+            <footer>Painel de controle - Bot WhatsApp</footer>
         </div>
     </div>
 
     <script>
-        // ========== CONFIGURAÇÕES ==========
-        let backendUrl = localStorage.getItem('backendUrl') || 'https://whatsapp-backend-dqfm.onrender.com';
+        // Lista de respostas (igual ao backend)
+        const respostas = {
+            'oi': 'Olá! Como posso ajudar?',
+            'ola': 'Olá! Como posso ajudar?',
+            'nino': 'Olá! O Silvino não está no momento, mas deixe sua mensagem que ele retorna assim que possível.',
+            'esta em casa': 'O Silvino não está em casa agora. Deixe seu recado!',
+            'ta por onde': 'Ele não está por perto no momento. Em que posso ajudar?',
+            'vem aqui': 'Infelizmente ele não pode ir agora. Deixe sua mensagem.',
+            'oi meu anjo': 'Olá! 😊 Como posso ajudar você?',
+            'bom dia': 'Bom dia! Em que posso ser útil?',
+            'boa tarde': 'Boa tarde! Como posso ajudar?',
+            'boa noite': 'Boa noite! Em que posso auxiliar?',
+            'menu': '📋 *Menu de opções*\n1 - Informações\n2 - Suporte\n3 - Horários',
+            'ajuda': 'Comandos disponíveis: oi, menu, info, suporte, horarios, contato',
+            'tchau': 'Até logo! Se precisar, estou aqui.',
+            'obrigado': 'Por nada! Estou à disposição.'
+        };
+
+        // Estado
+        let backendUrl = localStorage.getItem('backendUrl') || 'https://seuapp.railway.app';
         document.getElementById('backendUrl').value = backendUrl;
 
-        let rules = []; // será carregado do backend
-        let botAtivo = true;
-
-        // ========== ELEMENTOS DOM ==========
+        // Elementos DOM
         const statusBadge = document.getElementById('statusBadge');
         const qrDisplay = document.getElementById('qrDisplay');
         const qrImage = document.getElementById('qrImage');
         const botToggle = document.getElementById('botToggle');
         const botStatusText = document.getElementById('botStatusText');
-        const rulesListDiv = document.getElementById('rulesList');
+        const refreshBtn = document.getElementById('refreshStatusBtn');
         const saveUrlBtn = document.getElementById('saveUrlBtn');
-        const refreshStatusBtn = document.getElementById('refreshStatusBtn');
-        const addRuleBtn = document.getElementById('addRuleBtn');
-        const newKeyword = document.getElementById('newKeyword');
-        const newResponse = document.getElementById('newResponse');
+        const rulesList = document.getElementById('rulesList');
 
-        // ========== FUNÇÕES ==========
-        function salvarUrl() {
-            const url = document.getElementById('backendUrl').value.trim();
-            if (url) {
-                backendUrl = url.replace(/\/$/, '');
-                localStorage.setItem('backendUrl', backendUrl);
-                alert('URL salva!');
-                fetchStatus();
+        // Preencher lista de regras
+        function renderRules() {
+            let html = '';
+            for (const [key, value] of Object.entries(respostas)) {
+                html += `<div class="rule-item"><span class="keyword">${key}</span><span class="response">${value}</span></div>`;
             }
+            rulesList.innerHTML = html;
         }
+        renderRules();
 
+        // Salvar URL
+        saveUrlBtn.addEventListener('click', () => {
+            backendUrl = document.getElementById('backendUrl').value.replace(/\/$/, '');
+            localStorage.setItem('backendUrl', backendUrl);
+            fetchStatus();
+        });
+
+        // Buscar status
         async function fetchStatus() {
             if (!backendUrl) return;
             try {
-                const response = await fetch(`${backendUrl}/status`);
-                if (!response.ok) throw new Error('Erro na resposta');
-                const data = await response.json();
-                atualizarUI(data);
-                if (data.qr) fetchQR();
+                const res = await fetch(`${backendUrl}/status`);
+                if (!res.ok) throw new Error('Erro na resposta');
+                const data = await res.json();
+                updateUI(data);
             } catch (err) {
                 console.error('Erro ao buscar status:', err);
                 statusBadge.className = 'status-badge badge-offline';
-                statusBadge.innerText = 'Offline (erro)';
+                statusBadge.innerText = 'Offline';
                 qrDisplay.style.display = 'none';
             }
         }
 
-        async function fetchQR() {
-            if (!backendUrl) return;
-            try {
-                const response = await fetch(`${backendUrl}/qr`);
-                const html = await response.text();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const img = doc.querySelector('img');
-                if (img && img.src) {
-                    qrImage.src = img.src;
-                    qrDisplay.style.display = 'block';
-                } else {
-                    qrDisplay.style.display = 'none';
-                }
-            } catch (err) {
-                console.warn('Erro ao buscar QR:', err);
-                qrDisplay.style.display = 'none';
-            }
-        }
-
-        async function fetchRegras() {
-            if (!backendUrl) return;
-            try {
-                const response = await fetch(`${backendUrl}/regras`);
-                if (!response.ok) throw new Error('Erro ao carregar regras');
-                rules = await response.json();
-                renderRules();
-            } catch (err) {
-                console.error('Erro ao carregar regras:', err);
-                // Fallback para regras padrão
-                rules = [
-                    { keyword: 'oi', response: 'Olá! Como posso ajudar?', active: true },
-                    { keyword: 'menu', response: '📋 Menu...', active: true }
-                ];
-                renderRules();
-            }
-        }
-
-        async function toggleBot(ativo) {
-            if (!backendUrl) return;
-            try {
-                await fetch(`${backendUrl}/toggle`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ativo })
-                });
-                botAtivo = ativo;
-                atualizarToggleUI();
-            } catch (err) {
-                console.error('Erro ao alternar bot:', err);
-            }
-        }
-
-        function atualizarUI(data) {
+        // Atualizar interface
+        function updateUI(data) {
+            // Status badge
             if (data.ready) {
                 statusBadge.className = 'status-badge badge-online';
                 statusBadge.innerText = 'Online';
@@ -191,112 +151,66 @@
             } else if (data.qr) {
                 statusBadge.className = 'status-badge badge-waiting';
                 statusBadge.innerText = 'Aguardando QR';
-                // QR será buscado separadamente
+                fetchQR();
             } else {
                 statusBadge.className = 'status-badge badge-offline';
                 statusBadge.innerText = 'Offline';
                 qrDisplay.style.display = 'none';
             }
-            botAtivo = data.botAtivo;
-            atualizarToggleUI();
+
+            // Toggle do bot
+            botToggle.checked = data.botAtivo;
+            botStatusText.innerText = data.botAtivo ? 'Ativado' : 'Desativado';
         }
 
-        function atualizarToggleUI() {
-            botToggle.checked = botAtivo;
-            botStatusText.innerText = botAtivo ? 'Respondendo mensagens' : 'Desativado';
-        }
-
-        function renderRules() {
-            rulesListDiv.innerHTML = '';
-            rules.forEach((rule, index) => {
-                const ruleDiv = document.createElement('div');
-                ruleDiv.className = 'rule-item';
-                ruleDiv.innerHTML = `
-                    <span class="keyword">${escapeHtml(rule.keyword)}</span>
-                    <span class="response">${escapeHtml(rule.response)}</span>
-                    <div class="rule-toggle">
-                        <input type="checkbox" data-index="${index}" ${rule.active ? 'checked' : ''}>
-                    </div>
-                    <button class="btn-secondary" style="padding:0.4rem 1rem;" data-del-index="${index}">🗑️</button>
-                `;
-                rulesListDiv.appendChild(ruleDiv);
-            });
-
-            // Eventos dos toggles
-            document.querySelectorAll('.rule-toggle input').forEach(toggle => {
-                toggle.addEventListener('change', (e) => {
-                    const index = e.target.dataset.index;
-                    if (index !== undefined) {
-                        rules[index].active = e.target.checked;
-                        salvarRulesLocal();
-                    }
-                });
-            });
-
-            // Eventos dos botões deletar
-            document.querySelectorAll('[data-del-index]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = e.target.dataset.delIndex;
-                    if (index !== undefined) {
-                        rules.splice(index, 1);
-                        salvarRulesLocal();
-                        renderRules();
-                    }
-                });
-            });
-        }
-
-        function escapeHtml(unsafe) {
-            return unsafe.replace(/[&<>"']/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                if (m === '"') return '&quot;';
-                return '&#039;';
-            });
-        }
-
-        function salvarRulesLocal() {
-            // Salva no localStorage para persistência local
-            localStorage.setItem('rules', JSON.stringify(rules));
-        }
-
-        // ========== EVENTOS ==========
-        saveUrlBtn.addEventListener('click', salvarUrl);
-        refreshStatusBtn.addEventListener('click', () => fetchStatus());
-
-        botToggle.addEventListener('change', (e) => {
-            toggleBot(e.target.checked);
-        });
-
-        addRuleBtn.addEventListener('click', () => {
-            const keyword = newKeyword.value.trim();
-            const response = newResponse.value.trim();
-            if (!keyword || !response) {
-                alert('Preencha ambos os campos');
-                return;
-            }
-            rules.push({ keyword, response, active: true });
-            salvarRulesLocal();
-            renderRules();
-            newKeyword.value = '';
-            newResponse.value = '';
-        });
-
-        // ========== INICIALIZAÇÃO ==========
-        // Carrega regras do localStorage primeiro
-        const savedRules = localStorage.getItem('rules');
-        if (savedRules) {
+        // Buscar QR
+        async function fetchQR() {
+            if (!backendUrl) return;
             try {
-                rules = JSON.parse(savedRules);
-                renderRules();
-            } catch (e) {}
-        } else {
-            fetchRegras(); // busca do backend
+                const res = await fetch(`${backendUrl}/qr`);
+                const html = await res.text();
+                // Extrair src da imagem
+                const match = html.match(/<img[^>]+src="([^">]+)"/);
+                if (match && match[1]) {
+                    qrImage.src = match[1];
+                    qrDisplay.style.display = 'block';
+                } else {
+                    qrDisplay.style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Erro ao buscar QR:', err);
+                qrDisplay.style.display = 'none';
+            }
         }
 
+        // Ligar/desligar via toggle
+        botToggle.addEventListener('change', async (e) => {
+            const ativo = e.target.checked;
+            try {
+                const res = await fetch(`${backendUrl}/toggle`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ativo })
+                });
+                if (res.ok) {
+                    botStatusText.innerText = ativo ? 'Ativado' : 'Desativado';
+                } else {
+                    // Reverte se falhar
+                    botToggle.checked = !ativo;
+                    alert('Erro ao alterar estado');
+                }
+            } catch (err) {
+                botToggle.checked = !ativo;
+                alert('Erro de conexão');
+            }
+        });
+
+        // Atualizar manualmente
+        refreshBtn.addEventListener('click', fetchStatus);
+
+        // Inicializar
         fetchStatus();
-        setInterval(() => fetchStatus(), 30000); // atualiza a cada 30s
+        setInterval(fetchStatus, 30000); // atualiza a cada 30s
     </script>
 </body>
 </html>
